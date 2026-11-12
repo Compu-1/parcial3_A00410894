@@ -1,0 +1,6 @@
+# Descargas locales de npm para el cliente web.
+client-js/node_modules/
+# Archivos de compilación generados por Webpack.
+client-js/dist/
+# Stubs recreables desde el contrato Slice compartido.
+client-js/src/generated/

@@ -1,0 +1,106 @@
+<!doctype html> <!-- Declara un documento HTML5 para navegadores modernos. -->
+<html lang="es"> <!-- Define el idioma principal para lectores de pantalla y buscadores. -->
+<head> <!-- Agrupa los metadatos de la página. -->
+    <meta charset="UTF-8"> <!-- Permite mostrar correctamente nombres y mensajes en español. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Adapta el diseño a móviles y escritorio. -->
+    <meta name="theme-color" content="#101523"> <!-- Armoniza la barra del navegador con el tema visual. -->
+    <script src="assets/Ice.min.js"></script> <!-- Carga el runtime browser oficial antes de los stubs y la SPA. -->
+    <script src="assets/BookingService.js"></script> <!-- Registra en el navegador los proxies de BookingService. -->
+</head> <!-- Finaliza los metadatos del documento. -->
+<body> <!-- Contiene la aplicación que monta JavaScript. -->
+    <div id="app"> <!-- Proporciona el punto de montaje de la SPA. -->
+        <header class="topbar"> <!-- Presenta la marca y el estado de conexión RPC. -->
+            <a class="brand" href="#" aria-label="Icesi Live Arena, inicio"> <!-- Enlaza la marca con el inicio de la aplicación. -->
+                <span class="brand-mark" aria-hidden="true">ILA</span> <!-- Identifica visualmente la arena sin duplicar texto accesible. -->
+                <span>Icesi Live Arena</span> <!-- Muestra el nombre del sistema de reservas. -->
+            </a> <!-- Finaliza el enlace de marca. -->
+            <p id="connection-status" class="connection-status" data-state="offline" role="status">Conectando al servicio...</p> <!-- Informa el estado actual de ZeroC Ice. -->
+        </header> <!-- Finaliza la barra superior. -->
+        <main class="page-shell"> <!-- Organiza el contenido principal de la reserva. -->
+            <section class="event-card" aria-labelledby="event-name"> <!-- Resume evento, aforo y precios por zona. -->
+                <div class="event-copy"> <!-- Agrupa título y ubicación del evento. -->
+                    <p class="eyebrow">Universidad Icesi · Auditorio Manuelita</p> <!-- Contextualiza el lugar del concierto. -->
+                    <h1 id="event-name">Cargando evento...</h1> <!-- Recibe el nombre real consultado por RPC. -->
+                    <p id="event-date" class="event-date">Consultando fecha...</p> <!-- Recibe la fecha real consultada por RPC. -->
+                </div> <!-- Finaliza el bloque de información del evento. -->
+                <div class="event-stats" aria-label="Estado del aforo"> <!-- Agrupa contadores de disponibilidad. -->
+                    <p><strong id="available-count">—</strong><span>Disponibles</span></p> <!-- Muestra sillas disponibles desde el backend. -->
+                    <p><strong id="locked-count">—</strong><span>En reserva</span></p> <!-- Muestra sillas con bloqueo activo desde el backend. -->
+                    <p><strong id="booked-count">—</strong><span>Vendidas</span></p> <!-- Muestra sillas confirmadas desde el backend. -->
+                </div> <!-- Finaliza los contadores del aforo. -->
+            </section> <!-- Finaliza la tarjeta del evento. -->
+            <section class="price-strip" aria-label="Precios por zona"> <!-- Mantiene visibles los precios antes de seleccionar. -->
+                <p><span class="price-dot vip"></span>VIP <strong id="vip-price">—</strong></p> <!-- Presenta el precio oficial de la zona VIP. -->
+                <p><span class="price-dot platea"></span>Platea <strong id="platea-price">—</strong></p> <!-- Presenta el precio oficial de Platea. -->
+                <p><span class="price-dot general"></span>General <strong id="general-price">—</strong></p> <!-- Presenta el precio oficial de General. -->
+            </section> <!-- Finaliza el panel de tarifas. -->
+            <div class="workspace-grid"> <!-- Separa el mapa de sillas y el carrito de reservas. -->
+                <section class="panel seat-panel" aria-labelledby="seat-map-title"> <!-- Contiene la selección visual de sillas. -->
+                    <div class="panel-heading"> <!-- Alinea el título con el filtro de zona. -->
+                        <div> <!-- Agrupa el encabezado y la explicación del mapa. -->
+                            <p class="eyebrow">Elige tus lugares</p> <!-- Indica la acción principal de la sección. -->
+                            <h2 id="seat-map-title">Mapa de sillas</h2> <!-- Nombra el plano interactivo. -->
+                        </div> <!-- Finaliza el bloque de encabezado del mapa. -->
+                        <label class="filter-label" for="zone-filter">Zona</label> <!-- Asocia el filtro con su etiqueta accesible. -->
+                        <select id="zone-filter" aria-label="Filtrar sillas por zona"> <!-- Permite explorar zonas de manera independiente. -->
+                            <option value="all">Todas</option> <!-- Muestra el recinto completo. -->
+                            <option value="vip">VIP</option> <!-- Filtra la zona VIP. -->
+                            <option value="platea">Platea</option> <!-- Filtra la zona Platea. -->
+                            <option value="general">General</option> <!-- Filtra la zona General. -->
+                        </select> <!-- Finaliza el filtro de zona. -->
+                    </div> <!-- Finaliza el encabezado del panel. -->
+                    <div class="stage" aria-label="Escenario">Escenario</div> <!-- Orienta el mapa respecto al escenario. -->
+                    <div id="seat-grid" class="seat-grid" aria-live="polite"></div> <!-- Recibe las sillas y su estado actualizado por RPC. -->
+                    <ul class="legend" aria-label="Estados de silla"> <!-- Explica los colores usados por el plano. -->
+                        <li><span class="legend-seat available"></span>Disponible</li> <!-- Explica que una silla libre se puede seleccionar. -->
+                        <li><span class="legend-seat yours"></span>En tu carrito</li> <!-- Explica los bloqueos del cliente actual. -->
+                        <li><span class="legend-seat locked"></span>Reservada por otra persona</li> <!-- Explica bloqueos de otros clientes. -->
+                        <li><span class="legend-seat booked"></span>Vendida</li> <!-- Explica ventas definitivas. -->
+                    </ul> <!-- Finaliza la leyenda del mapa. -->
+                </section> <!-- Finaliza el panel de selección de sillas. -->
+                <aside class="panel cart-panel" aria-labelledby="cart-title"> <!-- Muestra reservas temporales y acciones de compra. -->
+                    <div class="panel-heading"> <!-- Destaca el carrito y su cantidad de elementos. -->
+                        <div> <!-- Agrupa título e instrucción del carrito. -->
+                            <p class="eyebrow">Tu selección</p> <!-- Identifica el contenido temporal del carrito. -->
+                            <h2 id="cart-title">Mis sillas</h2> <!-- Nombra el panel de reserva del cliente. -->
+                        </div> <!-- Finaliza el bloque de título del carrito. -->
+                        <span id="cart-count" class="count-pill">0</span> <!-- Muestra la cantidad de bloqueos vigentes propios. -->
+                    </div> <!-- Finaliza el encabezado del carrito. -->
+                    <div id="cart-items" class="cart-items" aria-live="polite"></div> <!-- Recibe asientos, cuenta regresiva y liberación manual. -->
+                    <div class="cart-total"> <!-- Resume el valor de las sillas bloqueadas. -->
+                        <span>Total estimado</span> <!-- Diferencia el cálculo previo del comprobante confirmado. -->
+                        <strong id="cart-total">$0</strong> <!-- Presenta el importe calculado para el carrito. -->
+                    </div> <!-- Finaliza el total estimado. -->
+                    <button id="checkout-button" class="button button-primary checkout-button" type="button" disabled>Continuar al pago</button> <!-- Abre el formulario de datos de compra. -->
+                    <p class="cart-note">Las sillas se retienen por 90 segundos. El temporizador se sincroniza con el servidor.</p> <!-- Explica la vigencia del bloqueo temporal. -->
+                </aside> <!-- Finaliza el carrito. -->
+            </div> <!-- Finaliza el espacio de mapa y carrito. -->
+            <section class="panel history-panel" aria-labelledby="history-title"> <!-- Permite consultar las compras del identificador actual. -->
+                <div class="panel-heading"> <!-- Alinea título e historial del cliente. -->
+                    <div> <!-- Agrupa título y explicación del historial. -->
+                        <p class="eyebrow">Actividad de esta sesión</p> <!-- Indica qué cliente asocia las compras. -->
+                        <h2 id="history-title">Mis reservas</h2> <!-- Nombra las compras confirmadas consultadas por RPC. -->
+                    </div> <!-- Finaliza el bloque del historial. -->
+                    <span id="session-label" class="session-label"></span> <!-- Ayuda a identificar la sesión durante pruebas concurrentes. -->
+                </div> <!-- Finaliza el encabezado del historial. -->
+                <div id="booking-history" class="history-list" aria-live="polite"></div> <!-- Recibe los comprobantes de compra del backend. -->
+            </section> <!-- Finaliza el historial de reservas. -->
+            <p id="feedback" class="feedback" role="status" aria-live="polite"></p> <!-- Comunica éxitos y errores sin interrumpir al usuario. -->
+        </main> <!-- Finaliza el contenido principal de la SPA. -->
+        <dialog id="checkout-dialog" class="checkout-dialog" aria-labelledby="checkout-title"> <!-- Proporciona un diálogo modal accesible para confirmar la compra. -->
+            <form id="checkout-form" class="checkout-form"> <!-- Valida los datos de contacto antes de llamar a confirmBooking. -->
+                <button id="close-checkout" class="dialog-close" type="button" aria-label="Cerrar formulario">×</button> <!-- Permite cerrar el formulario sin perder los bloqueos. -->
+                <p class="eyebrow">Último paso</p> <!-- Indica que se solicitan datos de facturación. -->
+                <h2 id="checkout-title">Confirma tu compra</h2> <!-- Nombra el paso final del flujo de reserva. -->
+                <p id="checkout-summary" class="dialog-summary"></p> <!-- Resume la cantidad de sillas que se confirmarán. -->
+                <label for="customer-name">Nombre completo</label> <!-- Asocia el nombre requerido con su control. -->
+                <input id="customer-name" name="customerName" type="text" autocomplete="name" minlength="2" required> <!-- Captura el nombre del comprador. -->
+                <label for="customer-email">Correo electrónico</label> <!-- Asocia el correo requerido con su control. -->
+                <input id="customer-email" name="customerEmail" type="email" autocomplete="email" required> <!-- Valida el formato del correo en el navegador. -->
+                <p id="checkout-error" class="checkout-error" role="alert"></p> <!-- Expone errores RPC sin cerrar el diálogo. -->
+                <button id="confirm-button" class="button button-primary" type="submit">Confirmar reserva</button> <!-- Envía la operación RPC de compra definitiva. -->
+            </form> <!-- Finaliza el formulario modal. -->
+        </dialog> <!-- Finaliza el diálogo de checkout. -->
+    </div> <!-- Finaliza el punto de montaje de la aplicación. -->
+</body> <!-- Finaliza el documento visible. -->
+</html> <!-- Finaliza el documento HTML5. -->

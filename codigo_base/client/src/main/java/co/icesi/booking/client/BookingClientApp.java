@@ -114,7 +114,7 @@ public class BookingClientApp {
         System.out.println("4. Confirmar compra de sillas bloqueadas (confirmBooking)");
         System.out.println("5. Liberar silla bloqueada (releaseSeat)");
         System.out.println("6. Ver mis sillas bloqueadas y reservas confirmadas");
-        System.out.println("7. EJECUTAR PRUEBA DE ESTRÉS DE CONCURRENCIA (Demostrar Race Condition)");
+        System.out.println("7. VALIDAR EXCLUSIÓN MUTUA DEL INVENTARIO"); // Nombra la prueba que verifica un solo ganador por asiento.
         System.out.println("8. Reiniciar catálogo de sillas (resetSeats)");
         System.out.println("0. Salir");
         System.out.println("--------------------------------------------------------------------------");
@@ -286,13 +286,14 @@ public class BookingClientApp {
         System.out.printf("Peticiones correctamente rechazadas     : %d%n", rejectedLocks.get());
 
         if (successLocks.get() > 1) {
-            System.out.println(" [VULNERABILIDAD CONFIRMADA]: ¡CONDICIÓN DE CARRERA DETECTADA!");
+            System.out.println(" [ERROR]: ¡CONDICIÓN DE CARRERA DETECTADA!"); // Señala que más de una petición ganó la misma silla.
             System.out.printf("   Más de un cliente (%d) logró bloquear la misma silla simultáneamente.%n",
                     successLocks.get());
-            System.out.println("   Causa: Ausencia de sincronización atómica en 'lockSeat()' del servidor.");
-            System.out.println("   Misión del estudiante: Implementar sincronización thread-safe en Java.");
-        } else {
-            System.out.println(" [SIN CONDICIÓN DE CARRERA]: Solo 1 hilo obtuvo el bloqueo. Servidor seguro.");
+            System.out.println("   Una sola silla fue concedida a varios clientes."); // Explica el incumplimiento de exclusión mutua.
+        } else if (successLocks.get() == 1) { // Considera correcto que exactamente una solicitud gane.
+            System.out.println(" [OK]: Solo 1 hilo obtuvo el bloqueo; los demás fueron rechazados."); // Confirma el resultado seguro esperado.
+        } else { // Detecta un fallo que no es una carrera, como que ningún cliente logre reservar.
+            System.out.println(" [ERROR]: Ningún hilo obtuvo el bloqueo; revise el servicio."); // Evita etiquetar una prueba fallida como exitosa.
         }
         System.out.println("==========================================================================\n");
     }

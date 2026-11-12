@@ -34,8 +34,11 @@ tasks.register('runServer') {
     dependsOn ':server:runServer'
 }
 
-tasks.register('runClient') {
+tasks.register('runClient', JavaExec) { // Permite pasar --args desde el comando de conveniencia en la raíz.
     group = 'application'
     description = 'Ejecuta el cliente Java de prueba de Reserva de Boletas'
-    dependsOn ':client:runClient'
+    dependsOn ':client:classes' // Compila cliente y contrato Slice antes de iniciar la consola.
+    mainClass = 'co.icesi.booking.client.BookingClientApp' // Usa el punto de entrada de la aplicación nativa.
+    classpath = project(':client').sourceSets.main.runtimeClasspath // Incluye Ice y los módulos Java requeridos.
+    standardInput = System.in // Permite interactuar con el menú desde la terminal.
 }

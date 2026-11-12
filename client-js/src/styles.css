@@ -1,0 +1,577 @@
+:root { /* Define tokens compartidos por todos los componentes visuales. */
+    color-scheme: dark; /* Hace que los controles nativos respeten el tema oscuro. */
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; /* Usa tipografía del sistema sin recursos remotos. */
+    background: #101523; /* Mantiene el fondo general oscuro y uniforme. */
+    color: #eef2ff; /* Asegura contraste para el texto principal. */
+    font-synthesis: none; /* Evita variantes tipográficas sintéticas inesperadas. */
+    text-rendering: optimizeLegibility; /* Mejora la lectura de textos y etiquetas. */
+    --surface: #191f30; /* Centraliza el color de las tarjetas. */
+    --surface-raised: #20283b; /* Distingue controles y superficies elevadas. */
+    --muted: #9da8c0; /* Define el tono de texto secundario. */
+    --accent: #c5f36b; /* Resalta acciones y disponibilidad. */
+    --danger: #ff8291; /* Comunica conflictos y errores. */
+    --border: rgba(215, 225, 255, 0.1); /* Establece bordes sutiles compartidos. */
+} /* Finaliza los tokens de diseño. */
+* { /* Aplica un modelo de caja consistente a todos los controles. */
+    box-sizing: border-box; /* Incluye padding y bordes dentro del tamaño declarado. */
+} /* Finaliza la regla global de caja. */
+body { /* Elimina márgenes y mantiene un lienzo de altura completa. */
+    min-width: 320px; /* Evita que el contenido colapse en pantallas pequeñas. */
+    min-height: 100vh; /* Ocupa al menos toda la altura disponible. */
+    margin: 0; /* Quita el margen predeterminado del navegador. */
+    background: radial-gradient(ellipse at 10% 0%, #233047 0, #101523 50rem); /* Añade profundidad sin imágenes externas. */
+} /* Finaliza los estilos del documento. */
+button, input, select { /* Unifica la tipografía de los controles interactivos. */
+    font: inherit; /* Conserva la jerarquía tipográfica de la aplicación. */
+} /* Finaliza la regla compartida de controles. */
+button { /* Indica que los controles son interactivos. */
+    cursor: pointer; /* Muestra el cursor de acción en botones habilitados. */
+} /* Finaliza el cursor para botones. */
+button:disabled { /* Evita sugerir acciones que no se pueden realizar. */
+    cursor: not-allowed; /* Comunica que la silla o acción está deshabilitada. */
+} /* Finaliza la regla para botones deshabilitados. */
+.topbar { /* Distribuye la marca y el estado de conexión. */
+    display: flex; /* Organiza los elementos principales en una fila. */
+    align-items: center; /* Centra verticalmente marca y estado. */
+    justify-content: space-between; /* Mantiene el estado junto al borde opuesto. */
+    gap: 1rem; /* Separa elementos en pantallas estrechas. */
+    padding: 1.1rem max(1.25rem, calc((100% - 78rem) / 2)); /* Alinea la barra con el contenido central. */
+    border-bottom: 1px solid var(--border); /* Separa navegación del contenido. */
+    background: rgba(16, 21, 35, 0.85); /* Da continuidad visual con transparencia ligera. */
+} /* Finaliza la barra superior. */
+.brand { /* Da formato al enlace de identidad del sistema. */
+    display: inline-flex; /* Alinea símbolo y nombre de marca. */
+    align-items: center; /* Centra el símbolo con el texto. */
+    gap: 0.7rem; /* Deja aire entre insignia y nombre. */
+    color: inherit; /* Evita el color azul por defecto de los enlaces. */
+    font-weight: 750; /* Destaca el nombre de la arena. */
+    text-decoration: none; /* Mantiene el diseño limpio sin subrayado. */
+} /* Finaliza la marca. */
+.brand-mark { /* Forma la insignia abreviada del proyecto. */
+    display: grid; /* Centra el texto de la insignia en ambas direcciones. */
+    width: 2.5rem; /* Define un tamaño táctil y reconocible. */
+    height: 2.5rem; /* Mantiene la insignia cuadrada. */
+    place-items: center; /* Centra horizontal y verticalmente las iniciales. */
+    border-radius: 0.8rem; /* Suaviza los extremos del símbolo. */
+    background: var(--accent); /* Hace visible la marca con el color de acento. */
+    color: #19220e; /* Contrasta las iniciales con el fondo claro. */
+    font-size: 0.75rem; /* Ajusta las iniciales al tamaño compacto. */
+    font-weight: 900; /* Refuerza la legibilidad del símbolo. */
+} /* Finaliza la insignia. */
+.connection-status { /* Presenta el estado actual del canal RPC. */
+    display: inline-flex; /* Permite alinear el indicador y su texto. */
+    align-items: center; /* Centra el indicador con la etiqueta. */
+    gap: 0.55rem; /* Separa el punto de estado de su descripción. */
+    margin: 0; /* Alinea el texto con el centro de la barra. */
+    color: var(--muted); /* Mantiene el estado secundario hasta conectar. */
+    font-size: 0.85rem; /* Diferencia el estado de los títulos principales. */
+} /* Finaliza la etiqueta de estado. */
+.connection-status::before { /* Añade un indicador visual del estado de conexión. */
+    width: 0.55rem; /* Define el diámetro del punto de estado. */
+    height: 0.55rem; /* Mantiene el punto circular. */
+    border-radius: 50%; /* Convierte el indicador en un círculo. */
+    background: #f0ad5e; /* Usa ámbar mientras no se confirma la conexión. */
+    content: ""; /* Crea el punto sin añadir texto redundante. */
+} /* Finaliza el indicador de estado. */
+.connection-status[data-state="online"]::before { /* Diferencia una conexión Ice activa. */
+    background: var(--accent); /* Usa verde para indicar conexión correcta. */
+    box-shadow: 0 0 0.8rem rgba(197, 243, 107, 0.55); /* Destaca el estado operativo. */
+} /* Finaliza el estilo del estado en línea. */
+.connection-status[data-state="offline"]::before { /* Diferencia una desconexión confirmada. */
+    background: var(--danger); /* Usa rojo para avisar de una interrupción RPC. */
+} /* Finaliza el estilo desconectado. */
+.page-shell { /* Centra y limita el ancho de la experiencia de compra. */
+    width: min(100% - 2rem, 78rem); /* Evita renglones demasiado largos en monitores grandes. */
+    margin: 2rem auto 4rem; /* Centra el contenido y deja espacio al final. */
+} /* Finaliza el contenedor principal. */
+.event-card { /* Da jerarquía al resumen principal del evento. */
+    display: flex; /* Separa información del evento y contadores. */
+    align-items: center; /* Alinea verticalmente los dos bloques. */
+    justify-content: space-between; /* Distribuye los bloques dentro de la tarjeta. */
+    gap: 2rem; /* Evita que el contenido se comprima. */
+    padding: clamp(1.5rem, 4vw, 2.5rem); /* Adapta el espaciado a distintas pantallas. */
+    border: 1px solid var(--border); /* Delimita el resumen del evento. */
+    border-radius: 1.4rem; /* Suaviza la tarjeta principal. */
+    background: linear-gradient(120deg, #25304a, #1a2031 65%); /* Destaca la sección sin imágenes externas. */
+    box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, 0.18); /* Da profundidad al contenido central. */
+} /* Finaliza la tarjeta del evento. */
+.event-copy { /* Limita el texto del evento para conservar la jerarquía. */
+    max-width: 38rem; /* Mantiene el título legible en una sola área. */
+} /* Finaliza el bloque textual. */
+.eyebrow { /* Define etiquetas breves encima de los encabezados. */
+    margin: 0 0 0.55rem; /* Separa la etiqueta del título siguiente. */
+    color: var(--accent); /* Vincula la etiqueta con el color de acción. */
+    font-size: 0.72rem; /* Mantiene discreta la información secundaria. */
+    font-weight: 800; /* Conserva contraste con el fondo oscuro. */
+    letter-spacing: 0.12em; /* Diferencia visualmente las etiquetas en mayúsculas. */
+    text-transform: uppercase; /* Da consistencia a las etiquetas cortas. */
+} /* Finaliza el estilo de las etiquetas. */
+h1, h2, p { /* Normaliza los márgenes de los encabezados y párrafos. */
+    margin-top: 0; /* Evita espacios superiores inconsistentes. */
+} /* Finaliza la normalización tipográfica. */
+h1 { /* Da énfasis al concierto consultado en el backend. */
+    margin-bottom: 0.45rem; /* Mantiene próxima la fecha del evento. */
+    font-size: clamp(1.8rem, 4vw, 3rem); /* Escala el título entre móvil y escritorio. */
+    letter-spacing: -0.045em; /* Compacta el título sin sacrificar legibilidad. */
+} /* Finaliza el título del evento. */
+.event-date { /* Presenta la fecha con menor jerarquía. */
+    margin-bottom: 0; /* Evita espacio extra al final de la tarjeta. */
+    color: #c2cbe0; /* Mantiene contraste adecuado para datos secundarios. */
+} /* Finaliza la fecha del evento. */
+.event-stats { /* Organiza los indicadores del aforo en tres columnas. */
+    display: grid; /* Crea columnas uniformes para los contadores. */
+    grid-template-columns: repeat(3, minmax(5rem, 1fr)); /* Conserva el mismo ancho por estado. */
+    gap: 1.15rem; /* Separa los datos sin sobrecargar la tarjeta. */
+} /* Finaliza la grilla de contadores. */
+.event-stats p { /* Agrupa valor numérico y etiqueta de cada estado. */
+    display: grid; /* Apila cifra y descripción verticalmente. */
+    gap: 0.3rem; /* Separa claramente valor y rótulo. */
+    margin: 0; /* Alinea el grupo con la tarjeta. */
+} /* Finaliza cada indicador. */
+.event-stats strong { /* Destaca el valor de cada contador. */
+    font-size: 1.6rem; /* Hace visible la cifra a simple vista. */
+} /* Finaliza el valor del contador. */
+.event-stats span { /* Atenúa el nombre de cada estado. */
+    color: var(--muted); /* Diferencia la etiqueta de la cifra. */
+    font-size: 0.78rem; /* Mantiene legible el rótulo secundario. */
+} /* Finaliza la etiqueta del contador. */
+.price-strip { /* Muestra los precios sin recargar el mapa. */
+    display: flex; /* Alinea las tarifas en una fila adaptable. */
+    flex-wrap: wrap; /* Permite saltar de línea en pantallas pequeñas. */
+    gap: 0.8rem 1.7rem; /* Separa tarifas vertical y horizontalmente. */
+    padding: 1rem 0.25rem 1.5rem; /* Abre espacio entre el resumen y el plano. */
+} /* Finaliza la franja de precios. */
+.price-strip p { /* Alinea el nombre, color y tarifa de una zona. */
+    display: inline-flex; /* Acomoda cada precio en una línea. */
+    align-items: center; /* Centra el punto de color con el texto. */
+    gap: 0.5rem; /* Deja separación entre cada parte del precio. */
+    margin: 0; /* Evita los márgenes de párrafo por defecto. */
+    color: var(--muted); /* Atenúa las etiquetas sin ocultar la tarifa. */
+    font-size: 0.9rem; /* Mantiene legible la información de precios. */
+} /* Finaliza una tarifa. */
+.price-strip strong { /* Destaca el importe que viene del servidor. */
+    color: #eef2ff; /* Da contraste al valor monetario. */
+    font-weight: 700; /* Resalta el importe sin competir con el evento. */
+} /* Finaliza el importe de tarifa. */
+.price-dot { /* Crea el punto de color asociado a cada zona. */
+    width: 0.65rem; /* Define un indicador compacto. */
+    height: 0.65rem; /* Conserva el indicador cuadrado antes del borde. */
+    border-radius: 0.2rem; /* Suaviza los bordes del indicador de zona. */
+} /* Finaliza el indicador de precio. */
+.price-dot.vip { /* Identifica la zona VIP. */
+    background: #d58cff; /* Asocia VIP con el violeta del mapa. */
+} /* Finaliza el color VIP. */
+.price-dot.platea { /* Identifica la zona Platea. */
+    background: #69c8ff; /* Asocia Platea con el azul del mapa. */
+} /* Finaliza el color Platea. */
+.price-dot.general { /* Identifica la zona General. */
+    background: #c5f36b; /* Asocia General con el verde del mapa. */
+} /* Finaliza el color General. */
+.workspace-grid { /* Distribuye plano y carrito con prioridad al mapa. */
+    display: grid; /* Activa la grilla para paneles relacionados. */
+    grid-template-columns: minmax(0, 1.65fr) minmax(18rem, 0.85fr); /* Da más espacio al mapa interactivo. */
+    align-items: start; /* Mantiene la altura de cada panel independiente. */
+    gap: 1.1rem; /* Separa visualmente mapa y carrito. */
+} /* Finaliza la grilla de trabajo. */
+.panel { /* Aplica una superficie coherente a cada sección principal. */
+    border: 1px solid var(--border); /* Define los límites de los paneles. */
+    border-radius: 1.1rem; /* Conserva las esquinas suaves del diseño. */
+    background: rgba(25, 31, 48, 0.92); /* Separa paneles del fondo de la página. */
+    box-shadow: 0 1rem 2.8rem rgba(0, 0, 0, 0.12); /* Da profundidad sutil a cada sección. */
+} /* Finaliza las superficies. */
+.seat-panel, .cart-panel, .history-panel { /* Unifica padding de mapa, carrito e historial. */
+    padding: 1.4rem; /* Deja aire alrededor de controles y listas. */
+} /* Finaliza el espaciado de paneles. */
+.panel-heading { /* Alinea encabezados y controles auxiliares. */
+    display: flex; /* Coloca los elementos secundarios junto al título. */
+    align-items: center; /* Mantiene los elementos en una línea central. */
+    justify-content: space-between; /* Distribuye encabezado y controles. */
+    gap: 0.8rem; /* Conserva una separación legible. */
+    margin-bottom: 1.1rem; /* Separa el encabezado del contenido. */
+} /* Finaliza el encabezado de cada panel. */
+.panel-heading h2 { /* Estiliza títulos del plano, carrito e historial. */
+    margin: 0; /* Alinea el título con el filtro o la insignia. */
+    font-size: 1.2rem; /* Da jerarquía frente a texto descriptivo. */
+    letter-spacing: -0.025em; /* Mantiene un título compacto y legible. */
+} /* Finaliza los títulos de panel. */
+.panel-heading .eyebrow { /* Evita separar demasiado la etiqueta y su título. */
+    margin-bottom: 0.3rem; /* Acerca el contexto al encabezado. */
+} /* Finaliza la etiqueta del panel. */
+.filter-label { /* Mantiene visible el propósito del filtro de zona. */
+    margin-left: auto; /* Alinea el filtro al extremo del encabezado. */
+    color: var(--muted); /* Diferencia la etiqueta del control. */
+    font-size: 0.82rem; /* Evita que el filtro compita con el título. */
+} /* Finaliza la etiqueta del filtro. */
+select, input { /* Unifica superficies de entrada. */
+    min-height: 2.6rem; /* Proporciona una superficie táctil cómoda. */
+    padding: 0.5rem 0.7rem; /* Da espacio al texto de los controles. */
+    border: 1px solid var(--border); /* Delimita campos sobre el fondo oscuro. */
+    border-radius: 0.65rem; /* Suaviza los campos de entrada. */
+    background: #131a29; /* Diferencia el control del panel contenedor. */
+    color: #eef2ff; /* Mantiene legible el valor seleccionado o escrito. */
+} /* Finaliza los controles de entrada. */
+.stage { /* Representa la orientación del escenario en el mapa. */
+    width: min(76%, 29rem); /* Mantiene una proporción menor al ancho del auditorio. */
+    margin: 0 auto 1.5rem; /* Centra el escenario encima de las sillas. */
+    padding: 0.55rem; /* Da espacio al texto sobre el escenario. */
+    border: 1px solid rgba(197, 243, 107, 0.2); /* Distingue el borde del escenario. */
+    border-radius: 50% 50% 0.7rem 0.7rem; /* Sugiere una tarima vista desde arriba. */
+    background: linear-gradient(180deg, rgba(197, 243, 107, 0.14), rgba(197, 243, 107, 0.025)); /* Da profundidad al escenario. */
+    color: #dff7b5; /* Mantiene legible el nombre del escenario. */
+    font-size: 0.75rem; /* Reduce el rótulo frente a las sillas. */
+    letter-spacing: 0.14em; /* Sugiere un rótulo de escenario. */
+    text-align: center; /* Centra el nombre del escenario. */
+    text-transform: uppercase; /* Hace reconocible la orientación del plano. */
+} /* Finaliza el escenario. */
+.seat-grid { /* Apila filas de sillas de manera ordenada. */
+    display: grid; /* Crea un contenedor para las filas. */
+    gap: 0.75rem; /* Separa filas de sillas. */
+    min-height: 9rem; /* Evita saltos de altura mientras se conecta al backend. */
+} /* Finaliza el mapa de sillas. */
+.seat-row { /* Alinea el identificador de fila y sus asientos. */
+    display: grid; /* Separa rótulo de fila y grilla de asientos. */
+    grid-template-columns: 2.2rem minmax(0, 1fr); /* Reserva sitio fijo para la letra de fila. */
+    align-items: center; /* Centra sillas con la marca de fila. */
+    gap: 0.35rem; /* Deja un espacio compacto para el rótulo. */
+} /* Finaliza la fila del plano. */
+.row-label { /* Identifica visualmente una fila del auditorio. */
+    color: var(--muted); /* Atenúa la referencia de fila. */
+    font-size: 0.78rem; /* Mantiene el rótulo compacto. */
+    font-weight: 700; /* Conserva legibilidad en el mapa. */
+    text-align: center; /* Centra el identificador en su columna. */
+} /* Finaliza la etiqueta de fila. */
+.row-seats { /* Distribuye las sillas dentro de cada fila. */
+    display: grid; /* Usa columnas para alinear asientos. */
+    grid-template-columns: repeat(10, minmax(1.7rem, 1fr)); /* Representa los diez asientos por fila definidos en el backend. */
+    gap: 0.3rem; /* Separa asientos para apuntar con mouse o dedo. */
+} /* Finaliza la grilla de asientos. */
+.seat-button { /* Da forma y estado visual a cada asiento interactivo. */
+    min-width: 0; /* Permite distribuir diez botones en pantallas pequeñas. */
+    min-height: 2rem; /* Mantiene una altura táctil legible. */
+    padding: 0.2rem 0.1rem; /* Ajusta el número de asiento dentro del botón. */
+    border: 1px solid transparent; /* Reserva espacio para bordes de estados. */
+    border-radius: 0.55rem; /* Diferencia la silla como control individual. */
+    background: #293447; /* Representa disponibilidad sin competir con el acento. */
+    color: #e8f0ff; /* Mantiene legible el número de silla. */
+    font-size: 0.65rem; /* Ajusta el ID corto a la celda. */
+    transition: transform 120ms ease, filter 120ms ease; /* Da respuesta visual inmediata al foco y hover. */
+} /* Finaliza el asiento base. */
+.seat-button:not(:disabled):hover { /* Indica los asientos que pueden bloquearse. */
+    transform: translateY(-2px); /* Refuerza la interacción con un movimiento discreto. */
+    filter: brightness(1.2); /* Destaca la silla enfocada con el puntero. */
+} /* Finaliza el hover de una silla libre. */
+.seat-button:focus-visible, .button:focus-visible, select:focus-visible, input:focus-visible { /* Hace visible el foco de teclado. */
+    outline: 3px solid rgba(197, 243, 107, 0.8); /* Permite localizar controles sin mouse. */
+    outline-offset: 2px; /* Separa el contorno del borde del control. */
+} /* Finaliza el estilo de foco accesible. */
+.seat-button[data-zone="vip"] { /* Colorea las sillas VIP. */
+    border-color: rgba(213, 140, 255, 0.45); /* Conecta VIP con su referencia cromática. */
+} /* Finaliza el borde de zona VIP. */
+.seat-button[data-zone="platea"] { /* Colorea las sillas Platea. */
+    border-color: rgba(105, 200, 255, 0.45); /* Conecta Platea con su referencia cromática. */
+} /* Finaliza el borde de zona Platea. */
+.seat-button[data-zone="general"] { /* Colorea las sillas Generales. */
+    border-color: rgba(197, 243, 107, 0.4); /* Conecta General con su referencia cromática. */
+} /* Finaliza el borde de zona General. */
+.seat-button[data-state="yours"] { /* Distingue el bloqueo perteneciente al cliente actual. */
+    background: #61782d; /* Usa verde oliva para el carrito propio. */
+    color: #f4ffd8; /* Mantiene alto contraste en una silla propia. */
+} /* Finaliza el estado propio. */
+.seat-button[data-state="locked"] { /* Distingue bloqueos de otros clientes. */
+    background: #4a435d; /* Usa un tono separado de disponibilidad y venta. */
+    color: #d0c8e3; /* Atenúa asientos que no se pueden elegir. */
+} /* Finaliza el estado retenido por otro. */
+.seat-button[data-state="booked"] { /* Distingue sillas vendidas definitivamente. */
+    background: #623846; /* Usa un tono rojo apagado para ventas definitivas. */
+    color: #ffd3da; /* Mantiene visible el número de una silla ocupada. */
+} /* Finaliza el estado vendido. */
+.empty-state { /* Presenta mensajes de carga o mapas vacíos. */
+    margin: 0; /* Alinea el mensaje con el panel. */
+    padding: 1rem 0; /* Evita que el mensaje se pegue a los bordes. */
+    color: var(--muted); /* Diferencia el texto de estado del contenido activo. */
+    font-size: 0.9rem; /* Conserva legibilidad en la zona de mapa. */
+} /* Finaliza el estado vacío. */
+.legend { /* Organiza la explicación de colores del mapa. */
+    display: flex; /* Alinea estados en una fila adaptable. */
+    flex-wrap: wrap; /* Permite varias filas de leyenda en móvil. */
+    gap: 0.7rem 1rem; /* Separa los estados de la leyenda. */
+    margin: 1.2rem 0 0; /* Distancia la leyenda de las sillas. */
+    padding: 1rem 0 0; /* Separa leyenda de su borde superior. */
+    border-top: 1px solid var(--border); /* Divide la leyenda del plano. */
+    color: var(--muted); /* Reduce la jerarquía de las etiquetas. */
+    font-size: 0.72rem; /* Mantiene la leyenda compacta. */
+    list-style: none; /* Reemplaza viñetas por muestras de color. */
+} /* Finaliza la leyenda. */
+.legend li { /* Alinea el color y su explicación. */
+    display: inline-flex; /* Conserva cada muestra junto a su etiqueta. */
+    align-items: center; /* Centra verticalmente los elementos. */
+    gap: 0.4rem; /* Separa muestra cromática y texto. */
+} /* Finaliza un estado de leyenda. */
+.legend-seat { /* Representa el estado con una muestra pequeña. */
+    width: 0.7rem; /* Define el ancho de la muestra. */
+    height: 0.7rem; /* Mantiene la muestra cuadrada. */
+    border-radius: 0.2rem; /* Hace juego con los botones del mapa. */
+    background: #293447; /* Coincide con asientos disponibles. */
+} /* Finaliza la muestra base. */
+.legend-seat.yours { /* Identifica bloqueos del cliente actual. */
+    background: #8cae48; /* Coincide con el estado propio del mapa. */
+} /* Finaliza la muestra propia. */
+.legend-seat.locked { /* Identifica bloqueos externos. */
+    background: #756a8e; /* Coincide con el estado ajeno del mapa. */
+} /* Finaliza la muestra retenida. */
+.legend-seat.booked { /* Identifica compras confirmadas. */
+    background: #a55367; /* Coincide con el estado vendido del mapa. */
+} /* Finaliza la muestra vendida. */
+.count-pill { /* Presenta la cantidad de sillas retenidas. */
+    display: grid; /* Centra el número de cantidad. */
+    min-width: 2rem; /* Conserva un tamaño estable para cifras de una sola unidad. */
+    height: 2rem; /* Mantiene el indicador circular. */
+    padding: 0 0.35rem; /* Acepta valores de dos cifras. */
+    place-items: center; /* Centra el contenido dentro de la insignia. */
+    border-radius: 99px; /* Convierte la insignia en una píldora. */
+    background: rgba(197, 243, 107, 0.13); /* Separa el contador del panel. */
+    color: var(--accent); /* Resalta la cantidad propia. */
+    font-size: 0.8rem; /* Mantiene compacto el contador. */
+    font-weight: 800; /* Hace legible la cifra. */
+} /* Finaliza el contador del carrito. */
+.cart-items { /* Reserva una superficie estable para las reservas temporales. */
+    display: grid; /* Apila elementos del carrito. */
+    gap: 0.7rem; /* Separa reservas independientes. */
+    min-height: 5rem; /* Evita saltos mientras se obtiene el carrito RPC. */
+} /* Finaliza la lista de reservas. */
+.cart-item { /* Agrupa información, temporizador y liberación de una silla. */
+    display: grid; /* Distribuye silla y acciones. */
+    grid-template-columns: minmax(0, 1fr) auto; /* Reserva espacio al texto y al botón. */
+    align-items: center; /* Centra la fila de carrito. */
+    gap: 0.5rem; /* Separa texto del control de liberar. */
+    padding: 0.75rem; /* Da aire a la fila. */
+    border: 1px solid var(--border); /* Distingue cada silla retenida. */
+    border-radius: 0.75rem; /* Mantiene coherencia con el mapa. */
+    background: rgba(32, 40, 59, 0.72); /* Da profundidad a la reserva temporal. */
+} /* Finaliza una fila del carrito. */
+.cart-item-copy { /* Apila ID, zona y tiempo restante. */
+    display: grid; /* Mantiene tres datos relacionados juntos. */
+    gap: 0.25rem; /* Separa texto principal y secundarios. */
+} /* Finaliza los datos de la fila. */
+.cart-item-copy strong { /* Destaca el identificador de silla. */
+    font-size: 0.9rem; /* Conserva legible el ID. */
+} /* Finaliza el identificador del asiento. */
+.cart-item-copy span { /* Da estilo al precio y tiempo del asiento. */
+    color: var(--muted); /* Reduce jerarquía de los detalles. */
+    font-size: 0.75rem; /* Mantiene compacto el contenido del carrito. */
+} /* Finaliza el detalle de silla. */
+.cart-item-copy .remaining-time { /* Destaca el cronómetro antes de expirar. */
+    color: #f6d582; /* Usa ámbar para recordar que la retención es temporal. */
+    font-variant-numeric: tabular-nums; /* Evita que las cifras salten al cambiar. */
+    font-weight: 750; /* Hace notoria la cuenta regresiva. */
+} /* Finaliza el temporizador individual. */
+.text-button { /* Da estilo discreto a la liberación voluntaria. */
+    padding: 0.45rem; /* Conserva un área táctil suficiente. */
+    border: 0; /* Evita un borde de botón pesado. */
+    background: transparent; /* Mantiene visible la superficie del carrito. */
+    color: var(--danger); /* Advierte que la acción libera la silla. */
+    font-size: 0.74rem; /* Acomoda la acción al tamaño de la fila. */
+    font-weight: 750; /* Distingue el enlace accionable. */
+} /* Finaliza el botón de liberar. */
+.cart-total { /* Alinea descripción y valor del carrito. */
+    display: flex; /* Organiza texto y cifra en una línea. */
+    justify-content: space-between; /* Alinea el total con los extremos del panel. */
+    gap: 1rem; /* Evita que descripción y cifra se superpongan. */
+    margin: 1rem 0; /* Separa el total de la lista y la acción principal. */
+    padding-top: 1rem; /* Respira sobre el borde divisor. */
+    border-top: 1px solid var(--border); /* Diferencia el cálculo del detalle de sillas. */
+    color: var(--muted); /* Atenúa la descripción del total. */
+    font-size: 0.85rem; /* Mantiene el resumen compacto. */
+} /* Finaliza el resumen del carrito. */
+.cart-total strong { /* Destaca el importe total estimado. */
+    color: #eef2ff; /* Asegura el contraste del monto. */
+    font-size: 1rem; /* Da relevancia al total. */
+} /* Finaliza el monto total. */
+.button { /* Define controles principales para checkout y confirmación. */
+    min-height: 2.8rem; /* Conserva altura cómoda para interacción táctil. */
+    padding: 0.7rem 1rem; /* Deja aire alrededor de la etiqueta. */
+    border: 0; /* Evita bordes en acciones primarias. */
+    border-radius: 0.72rem; /* Suaviza los controles destacados. */
+    font-weight: 800; /* Distingue acciones principales. */
+    transition: filter 120ms ease, transform 120ms ease; /* Da respuesta inmediata a hover. */
+} /* Finaliza el estilo base del botón. */
+.button-primary { /* Destaca la siguiente acción de compra. */
+    background: var(--accent); /* Usa el color de acento como acción principal. */
+    color: #19220e; /* Mantiene contraste alto sobre el verde claro. */
+} /* Finaliza el botón principal. */
+.button-primary:not(:disabled):hover { /* Responde al puntero cuando la acción está disponible. */
+    transform: translateY(-1px); /* Eleva ligeramente el botón activo. */
+    filter: brightness(1.05); /* Aclara el botón durante la interacción. */
+} /* Finaliza el hover del botón principal. */
+.button:disabled { /* Atenúa acciones que requieren primero un bloqueo. */
+    background: #3a4355; /* Indica que falta una condición para continuar. */
+    color: #8c96aa; /* Mantiene legible la acción deshabilitada. */
+} /* Finaliza la acción deshabilitada. */
+.checkout-button { /* Ocupa el ancho del carrito para ser fácil de encontrar. */
+    width: 100%; /* Extiende la acción a todo el panel. */
+} /* Finaliza el botón de checkout. */
+.cart-note { /* Explica la política temporal del bloqueo. */
+    margin: 0.8rem 0 0; /* Separa la explicación de la acción principal. */
+    color: var(--muted); /* Presenta la política como información secundaria. */
+    font-size: 0.72rem; /* Mantiene el texto breve sin competir con el CTA. */
+    line-height: 1.5; /* Mejora la lectura del texto en varias líneas. */
+} /* Finaliza la nota del carrito. */
+.history-panel { /* Separa el historial del flujo de selección. */
+    margin-top: 1.1rem; /* Mantiene distancia respecto a mapa y carrito. */
+} /* Finaliza el panel de historial. */
+.session-label { /* Identifica al cliente de una pestaña durante pruebas. */
+    max-width: 50%; /* Evita que el identificador desplace el título. */
+    overflow: hidden; /* Oculta el exceso de identificadores largos. */
+    color: var(--muted); /* Mantiene el ID como referencia secundaria. */
+    font-family: ui-monospace, SFMono-Regular, Consolas, monospace; /* Diferencia la cadena de sesión del texto normal. */
+    font-size: 0.72rem; /* Presenta el identificador en tamaño compacto. */
+    text-overflow: ellipsis; /* Conserva contexto si el ID no cabe. */
+    white-space: nowrap; /* Evita que la sesión parta el encabezado. */
+} /* Finaliza la etiqueta de sesión. */
+.history-list { /* Organiza los comprobantes en filas separadas. */
+    display: grid; /* Apila reservas históricas. */
+    gap: 0.65rem; /* Separa comprobantes diferentes. */
+} /* Finaliza la lista de historial. */
+.booking-card { /* Presenta un comprobante confirmado. */
+    display: flex; /* Separa el código de la fecha y total. */
+    align-items: center; /* Centra las dos áreas del comprobante. */
+    justify-content: space-between; /* Distribuye detalles a ambos lados. */
+    gap: 1rem; /* Evita que los datos colisionen en pantallas estrechas. */
+    padding: 0.85rem 1rem; /* Da aire a la fila del historial. */
+    border: 1px solid var(--border); /* Delimita cada comprobante. */
+    border-radius: 0.75rem; /* Mantiene coherencia con las demás superficies. */
+    background: rgba(32, 40, 59, 0.56); /* Diferencia el comprobante del panel. */
+} /* Finaliza la tarjeta de reserva. */
+.booking-card strong { /* Destaca el código de confirmación. */
+    color: var(--accent); /* Hace fácil encontrar el identificador de reserva. */
+} /* Finaliza el código del comprobante. */
+.booking-card span { /* Presenta asientos, fecha y valor facturado. */
+    color: var(--muted); /* Mantiene los detalles en jerarquía secundaria. */
+    font-size: 0.8rem; /* Ajusta varios datos en espacios moderados. */
+} /* Finaliza el detalle del comprobante. */
+.feedback { /* Presenta notificaciones transitorias de operación. */
+    min-height: 1.5rem; /* Evita saltos del contenido al mostrar un mensaje. */
+    margin: 0.8rem 0 0; /* Separa el mensaje del historial. */
+    color: var(--muted); /* Mantiene el estado neutro hasta una respuesta. */
+    font-size: 0.88rem; /* Conserva legibilidad para alertas breves. */
+} /* Finaliza el área de notificaciones. */
+.feedback[data-kind="success"] { /* Identifica confirmaciones exitosas. */
+    color: var(--accent); /* Usa verde para indicar una operación completada. */
+} /* Finaliza el mensaje positivo. */
+.feedback[data-kind="error"] { /* Identifica operaciones fallidas. */
+    color: var(--danger); /* Usa rojo para errores o conflictos RPC. */
+} /* Finaliza el mensaje de error. */
+.checkout-dialog { /* Da estilo al modal de compra. */
+    width: min(100% - 2rem, 29rem); /* Mantiene el formulario dentro de pantallas pequeñas. */
+    padding: 0; /* Traslada el espaciado al formulario. */
+    border: 1px solid var(--border); /* Delimita el modal sobre la capa oscura. */
+    border-radius: 1.1rem; /* Mantiene las esquinas coherentes con los paneles. */
+    background: #191f30; /* Mantiene contraste con el contenido alrededor. */
+    color: #eef2ff; /* Conserva legible el formulario. */
+    box-shadow: 0 2rem 6rem rgba(0, 0, 0, 0.55); /* Separa visualmente el diálogo modal. */
+} /* Finaliza el modal de checkout. */
+.checkout-dialog::backdrop { /* Atenúa el resto de la SPA mientras se confirma la compra. */
+    background: rgba(5, 8, 15, 0.78); /* Mantiene foco en el formulario. */
+    backdrop-filter: blur(5px); /* Reduce distracciones del mapa detrás del modal. */
+} /* Finaliza la capa de fondo del modal. */
+.checkout-form { /* Organiza campos de nombre y correo del comprador. */
+    position: relative; /* Ancla el botón de cerrar en la esquina. */
+    display: grid; /* Apila campos y botones de forma accesible. */
+    gap: 0.7rem; /* Separa campos consecutivos. */
+    padding: 2rem; /* Mantiene contenido dentro de los bordes del modal. */
+} /* Finaliza el formulario. */
+.checkout-form h2 { /* Destaca el título del proceso de compra. */
+    margin-bottom: 0; /* Mantiene compacto el bloque de encabezado. */
+} /* Finaliza el título de checkout. */
+.checkout-form label { /* Presenta los nombres de campos antes de la entrada. */
+    margin-top: 0.4rem; /* Distingue cada campo del anterior. */
+    color: #cbd4e8; /* Mantiene legible la etiqueta. */
+    font-size: 0.82rem; /* Diferencia etiqueta y contenido de texto. */
+    font-weight: 700; /* Señala la relación entre nombre y control. */
+} /* Finaliza las etiquetas del formulario. */
+.checkout-form input { /* Ocupa el ancho disponible en el diálogo. */
+    width: 100%; /* Mantiene un tamaño cómodo de entrada. */
+} /* Finaliza los campos del formulario. */
+.dialog-close { /* Ubica la acción de cancelar sin competir con el CTA. */
+    position: absolute; /* Ancla el botón a la esquina superior derecha. */
+    top: 0.85rem; /* Mantiene el botón dentro del borde del formulario. */
+    right: 0.9rem; /* Separa el botón de la esquina derecha. */
+    width: 2rem; /* Proporciona un área táctil suficiente. */
+    height: 2rem; /* Mantiene el control cuadrado. */
+    border: 0; /* Evita borde innecesario en el icono. */
+    border-radius: 50%; /* Distingue el control de cierre. */
+    background: var(--surface-raised); /* Hace visible el botón sobre el panel. */
+    color: #eef2ff; /* Conserva contraste para el símbolo de cierre. */
+    font-size: 1.3rem; /* Hace identificable el símbolo ×. */
+} /* Finaliza el botón de cierre. */
+.dialog-summary { /* Resume la operación que confirmará el comprador. */
+    margin: 0.3rem 0; /* Separa el resumen del encabezado y formulario. */
+    color: var(--muted); /* Distingue la explicación de los campos requeridos. */
+} /* Finaliza el resumen modal. */
+.checkout-error { /* Reserva lugar para errores de datos o de RPC. */
+    min-height: 1rem; /* Evita saltos cuando aparece una validación. */
+    margin: 0; /* Alinea el error con los campos y el botón. */
+    color: var(--danger); /* Destaca problemas que el usuario debe corregir. */
+    font-size: 0.82rem; /* Mantiene el error visible sin dominar el diálogo. */
+} /* Finaliza el error modal. */
+@media (max-width: 850px) { /* Ajusta la página a tabletas y ventanas estrechas. */
+    .event-card { /* Reordena el resumen del evento. */
+        align-items: flex-start; /* Permite que contadores ocupen su propia fila. */
+        flex-direction: column; /* Apila detalles y contadores. */
+    } /* Finaliza el ajuste de la tarjeta. */
+    .workspace-grid { /* Reorganiza mapa y carrito en una sola columna. */
+        grid-template-columns: minmax(0, 1fr); /* Evita comprimir el mapa interactivo. */
+    } /* Finaliza el ajuste de paneles. */
+    .event-stats { /* Limita el ancho de los indicadores en tablet. */
+        width: min(100%, 28rem); /* Mantiene los tres valores agrupados. */
+    } /* Finaliza el ajuste de estadísticas. */
+} /* Finaliza el ajuste para tablet. */
+@media (max-width: 520px) { /* Optimiza la experiencia en teléfonos. */
+    .topbar { /* Compacta la barra de navegación. */
+        align-items: flex-start; /* Permite dos líneas sin recortar el estado. */
+        flex-direction: column; /* Apila marca y estado de conexión. */
+        padding: 0.9rem 1rem; /* Reduce márgenes en pantallas pequeñas. */
+    } /* Finaliza la barra móvil. */
+    .page-shell { /* Reduce los márgenes laterales en móvil. */
+        width: min(100% - 1rem, 78rem); /* Aprovecha el ancho disponible. */
+        margin-top: 1rem; /* Evita un espacio superior excesivo. */
+    } /* Finaliza el contenedor móvil. */
+    .event-card { /* Compacta la tarjeta del evento en móvil. */
+        gap: 1.2rem; /* Mantiene separada la información apilada. */
+        padding: 1.2rem; /* Deja espacio sin quitar anchura al texto. */
+    } /* Finaliza la tarjeta móvil. */
+    .event-stats { /* Ajusta los contadores al ancho del teléfono. */
+        grid-template-columns: repeat(3, minmax(0, 1fr)); /* Conserva una cifra por estado. */
+        gap: 0.4rem; /* Reduce separación entre cifras. */
+    } /* Finaliza los contadores móviles. */
+    .event-stats strong { /* Ajusta el tamaño de las cifras al móvil. */
+        font-size: 1.25rem; /* Evita desbordamiento en anchos pequeños. */
+    } /* Finaliza el valor móvil. */
+    .event-stats span { /* Ajusta etiquetas pequeñas a la anchura disponible. */
+        font-size: 0.67rem; /* Evita que las etiquetas se superpongan. */
+    } /* Finaliza las etiquetas móviles. */
+    .seat-panel, .cart-panel, .history-panel { /* Reduce padding de paneles en móvil. */
+        padding: 1rem; /* Aumenta el espacio útil del mapa y carrito. */
+    } /* Finaliza el ajuste de paneles móviles. */
+    .panel-heading { /* Permite que título y filtro pasen a una nueva fila. */
+        flex-wrap: wrap; /* Evita que los controles se corten. */
+    } /* Finaliza el ajuste del encabezado móvil. */
+    .filter-label { /* Sitúa el filtro junto a su control en móvil. */
+        margin-left: 0; /* Evita separarlo demasiado del título. */
+    } /* Finaliza el filtro móvil. */
+    .row-seats { /* Reduce el espacio entre las diez sillas de cada fila. */
+        gap: 0.16rem; /* Acomoda las sillas sin provocar scroll horizontal. */
+    } /* Finaliza la fila móvil. */
+    .seat-button { /* Compacta el botón para caber en el mapa móvil. */
+        min-height: 1.8rem; /* Conserva un objetivo táctil razonable. */
+        border-radius: 0.35rem; /* Reduce adornos en el plano estrecho. */
+        font-size: 0.58rem; /* Ajusta el número al botón reducido. */
+    } /* Finaliza la silla móvil. */
+    .booking-card { /* Apila detalles en comprobantes estrechos. */
+        align-items: flex-start; /* Alinea la información a la parte superior. */
+        flex-direction: column; /* Evita superponer total y código. */
+    } /* Finaliza el historial móvil. */
+    .checkout-form { /* Reduce padding del modal en pantallas pequeñas. */
+        padding: 1.4rem; /* Aumenta la superficie disponible para campos. */
+    } /* Finaliza el formulario móvil. */
+} /* Finaliza las reglas para móviles. */

@@ -9,9 +9,3 @@ dependencies {
 application {
     mainClass = 'co.icesi.booking.client.BookingClientApp'
 }
-
-task runClient(type: JavaExec) {
-    mainClass = 'co.icesi.booking.client.BookingClientApp'
-    classpath = sourceSets.main.runtimeClasspath
-    standardInput = System.in
-}

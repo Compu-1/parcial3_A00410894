@@ -36,13 +36,14 @@ public class BookingServerApp {
         initData.properties.setProperty("Ice.ThreadPool.Server.Size", "10");
         initData.properties.setProperty("Ice.ThreadPool.Server.SizeMax", "100");
 
+        BookingServiceImpl servant = null; // Conserva una referencia para detener el planificador al apagar el servidor.
         try (Communicator communicator = Util.initialize(args, initData)) {
             int wsPort = port + 2; // Puerto 10002 para WebSocket de navegadores
             // Endpoint dual: TCP para clientes nativos (puerto 10000) y WebSocket para clientes Web (puerto 10002)
             String endpoint = String.format("default -p %d:ws -h 0.0.0.0 -p %d", port, wsPort);
             ObjectAdapter adapter = communicator.createObjectAdapterWithEndpoints("BookingServerAdapter", endpoint);
 
-            BookingServiceImpl servant = new BookingServiceImpl();
+            servant = new BookingServiceImpl(); // Construye el servicio que administra inventario y vencimientos.
             adapter.add(servant, Util.stringToIdentity(SERVICE_IDENTITY));
             adapter.activate();
 
@@ -53,7 +54,7 @@ public class BookingServerApp {
             printNetworkInterfaces(port, wsPort);
             System.out.println("--------------------------------------------------------------------------");
             System.out.println("[INFO] Catálogo inicializado: Concierto Icesi Live Arena (90 asientos).");
-            System.out.println("[ALERTA] Concurrencia intencionalmente incompleta para fines didácticos.");
+            System.out.println("[OK] Operaciones de inventario protegidas contra condiciones de carrera."); // Confirma que el servidor inicia con exclusión mutua habilitada.
             System.out.println("[INFO] Presione Ctrl+C para detener el servidor.");
             System.out.println("==========================================================================");
 
@@ -61,6 +62,10 @@ public class BookingServerApp {
         } catch (Exception e) {
             System.err.println("[ERROR] Error crítico al iniciar servidor ZeroC Ice: " + e.getMessage());
             e.printStackTrace();
+        } finally { // Garantiza que el hilo programado se cierre incluso ante errores de arranque.
+            if (servant != null) { // Evita cerrar una instancia que no alcanzó a construirse.
+                servant.close(); // Detiene el limpiador periódico de bloqueos.
+            }
         }
     }
 
