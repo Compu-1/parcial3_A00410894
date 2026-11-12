@@ -1,0 +1,2 @@
+rootProject.name = 'seat-booking-ice'
+include 'common', 'server', 'client'
