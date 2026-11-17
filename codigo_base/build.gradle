@@ -1,44 +1,44 @@
-plugins {
-    id 'com.zeroc.gradle.ice-builder.slice' version '1.5.0' apply false
-}
+plugins { // Declara complementos disponibles para los subproyectos.
+    id 'com.zeroc.gradle.ice-builder.slice' version '1.5.0' apply false // Permite compilar contratos Slice desde el módulo common.
+} // Finaliza la declaración raíz de complementos.
 
-allprojects {
-    repositories {
-        mavenCentral()
-    }
-}
+allprojects { // Aplica repositorios comunes a todos los módulos.
+    repositories { // Declara de dónde descargar dependencias.
+        mavenCentral() // Usa el repositorio público central de Maven.
+    } // Finaliza la configuración de repositorios.
+} // Finaliza la configuración común de todos los proyectos.
 
-subprojects {
-    apply plugin: 'java'
+subprojects { // Configura las reglas compartidas para common, server y client.
+    apply plugin: 'java' // Habilita compilación y pruebas Java en cada módulo.
 
-    java {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
+    java { // Fija la versión de lenguaje y bytecode usada por el curso.
+        sourceCompatibility = JavaVersion.VERSION_17 // Compila sintaxis fuente compatible con Java 17.
+        targetCompatibility = JavaVersion.VERSION_17 // Produce bytecode ejecutable en Java 17.
+    } // Finaliza las opciones de Java.
 
-    dependencies {
-        implementation 'com.zeroc:ice:3.7.10'
-        testImplementation 'junit:junit:4.13.2'
-    }
+    dependencies { // Declara bibliotecas compartidas de ejecución y pruebas.
+        implementation 'com.zeroc:ice:3.7.10' // Añade ZeroC Ice 3.7 a los módulos Java.
+        testImplementation 'junit:junit:4.13.2' // Añade JUnit 4 para pruebas automatizadas.
+    } // Finaliza las dependencias comunes.
 
-    test {
-        testLogging {
-            events "passed", "failed", "skipped"
-        }
-    }
-}
+    test { // Configura los resultados visibles de las pruebas.
+        testLogging { // Selecciona qué estados informa Gradle.
+            events "passed", "failed", "skipped" // Muestra pruebas correctas, fallidas y omitidas.
+        } // Finaliza el formato de salida de pruebas.
+    } // Finaliza las opciones de pruebas.
+} // Finaliza la configuración de los subproyectos.
 
-tasks.register('runServer') {
-    group = 'application'
-    description = 'Ejecuta el servidor ZeroC Ice de Reserva de Boletas (TCP 10000 + WebSocket 10002)'
-    dependsOn ':server:runServer'
-}
+tasks.register('runServer') { // Crea un comando raíz para iniciar el servidor.
+    group = 'application' // Agrupa la tarea con las tareas ejecutables.
+    description = 'Ejecuta el servidor ZeroC Ice de Reserva de Boletas (TCP 10000 + WebSocket 10002)' // Describe los canales que se activan.
+    dependsOn ':server:runServer' // Delega la ejecución a la tarea del módulo server.
+} // Finaliza el comando raíz del servidor.
 
 tasks.register('runClient', JavaExec) { // Permite pasar --args desde el comando de conveniencia en la raíz.
-    group = 'application'
-    description = 'Ejecuta el cliente Java de prueba de Reserva de Boletas'
+    group = 'application' // Agrupa el cliente con las tareas ejecutables.
+    description = 'Ejecuta el cliente Java de prueba de Reserva de Boletas' // Describe la herramienta de consola.
     dependsOn ':client:classes' // Compila cliente y contrato Slice antes de iniciar la consola.
     mainClass = 'co.icesi.booking.client.BookingClientApp' // Usa el punto de entrada de la aplicación nativa.
     classpath = project(':client').sourceSets.main.runtimeClasspath // Incluye Ice y los módulos Java requeridos.
     standardInput = System.in // Permite interactuar con el menú desde la terminal.
-}
+} // Finaliza el comando raíz del cliente.

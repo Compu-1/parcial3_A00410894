@@ -1,10 +1,10 @@
-plugins {
-    id 'java-library'
-    id 'com.zeroc.gradle.ice-builder.slice'
-}
+plugins { // Declara compilación de biblioteca y generación de código Slice.
+    id 'java-library' // Publica las clases comunes para server y client.
+    id 'com.zeroc.gradle.ice-builder.slice' // Genera clases Java a partir del contrato Slice.
+} // Finaliza los complementos del contrato.
 
-slice {
-    java {
-        srcDir = 'src/main/slice'
-    }
-}
+slice { // Configura dónde están los contratos RPC.
+    java { // Define las opciones de generación para el lenguaje Java.
+        srcDir = 'src/main/slice' // Lee BookingService.ice desde la carpeta convencional.
+    } // Finaliza las opciones del generador Java.
+} // Finaliza la configuración del compilador Slice.

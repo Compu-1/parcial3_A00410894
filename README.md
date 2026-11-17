@@ -45,7 +45,7 @@ cd codigo_base
 .\gradlew.bat test
 ```
 
-La prueba de concurrencia automatizada lanza diez clientes contra la misma silla y comprueba que exactamente uno obtenga el bloqueo. También se comprueba que no se pueda comprar una silla disponible o retenida por otra sesión, y que no se dupliquen sillas en una compra.
+Las pruebas automatizadas comprueban que diez clientes simultáneos produzcan un solo bloqueo exitoso; que solo el propietario pueda renovar o liberar una silla; que las retenciones vencidas se liberen y no se puedan comprar; que una solicitud de compra inválida no venda parcialmente otras sillas; que no se acepten correos inválidos ni IDs repetidos; y que el reinicio restaure el inventario y limpie el historial.
 
 Para repetir la prueba desde el cliente de consola, inicia el servidor y ejecuta:
 
@@ -68,7 +68,7 @@ El cliente interactivo también está disponible con `.\gradlew.bat runClient`.
 
 Las operaciones del inventario son sincronizadas en una única instancia del servicio: validación, cambio de estado y registro de la compra no se intercalan con otra solicitud. Un planificador libera bloqueos vencidos cada segundo; las lecturas también normalizan expiraciones para mantener consistentes el mapa y los contadores. El frontend muestra el tiempo restante a partir de la marca temporal entregada por el backend y actualiza la disponibilidad periódicamente.
 
-Los archivos Java, JavaScript, CSS y HTML escritos para esta implementación tienen comentarios explicativos línea por línea. `package.json` se mantiene como JSON válido, ya que el formato no permite comentarios.
+Los archivos Java, JavaScript, CSS, HTML, Slice y Gradle tienen comentarios explicativos junto a cada línea de código para facilitar su sustentación. Los JSON (`package.json` y `package-lock.json`) se mantienen válidos, ya que el formato no permite comentarios; los stubs Slice generados se reconstruyen automáticamente y no se editan a mano.
 
 ## Alcance actual
 

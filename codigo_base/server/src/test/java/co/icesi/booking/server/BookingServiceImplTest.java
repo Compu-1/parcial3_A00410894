@@ -18,6 +18,7 @@ import java.util.concurrent.Future; // Recoge los resultados de cada solicitud.
 import java.util.concurrent.TimeUnit; // Limita la espera de las respuestas concurrentes.
 
 import static org.junit.Assert.assertEquals; // Comprueba la cantidad de bloqueos concedidos.
+import static org.junit.Assert.assertFalse; // Comprueba acciones que deben rechazarse.
 import static org.junit.Assert.assertNotNull; // Comprueba que la compra tenga resultado.
 import static org.junit.Assert.assertThrows; // Comprueba que las entradas inválidas fallen.
 import static org.junit.Assert.assertTrue; // Comprueba el éxito de la compra válida.
@@ -77,6 +78,7 @@ public class BookingServiceImplTest { // Agrupa pruebas de integridad del invent
 
         service.lockSeat("A-1", "owner", null); // Retiene la silla para una identidad conocida.
         assertThrows(BookingException.class, () -> service.confirmBooking(availableSeat, "other", "Ana Pérez", "ana@example.com", null)); // Rechaza la compra de un bloqueo ajeno.
+        assertThrows(InvalidBookingException.class, () -> service.confirmBooking(availableSeat, "owner", "Ana Pérez", "correo-invalido", null)); // Rechaza correos que no tienen formato de dirección válido.
 
         String[] duplicateSeats = {"A-1", "A-1"}; // Construye una solicitud que no debe duplicar el cobro.
         assertThrows(InvalidBookingException.class, () -> service.confirmBooking(duplicateSeats, "owner", "Ana Pérez", "ana@example.com", null)); // Rechaza IDs de asiento repetidos.
@@ -87,4 +89,61 @@ public class BookingServiceImplTest { // Agrupa pruebas de integridad del invent
         assertEquals(SeatState.BOOKED, service.getSeat("A-1", null).state); // Verifica que la silla termine vendida.
         assertEquals(1, service.getMyBookings("owner", null).length); // Verifica que el historial registre una compra.
     } // Finaliza el caso de validación transaccional.
+
+    @Test // Verifica que solo el propietario pueda renovar y liberar una silla bloqueada.
+    public void onlyLockOwnerCanRenewOrReleaseSeat() throws Exception { // Permite invocar operaciones RPC que declaran excepciones.
+        long firstExpiration = service.lockSeat("A-1", "owner", null).expiresAt; // Retiene la silla para el cliente propietario.
+        assertThrows(SeatNotAvailableException.class, () -> service.lockSeat("A-1", "other", null)); // Impide que otro cliente renueve el bloqueo.
+        assertFalse(service.releaseSeat("A-1", "other", null)); // Impide que otro cliente libere el bloqueo.
+
+        long renewedExpiration = service.lockSeat("A-1", "owner", null).expiresAt; // Permite al propietario renovar su retención.
+        assertTrue(renewedExpiration >= firstExpiration); // Comprueba que la renovación conserva o prolonga el vencimiento.
+        assertTrue(service.releaseSeat("A-1", "owner", null)); // Permite que el propietario libere voluntariamente la silla.
+        assertEquals(SeatState.AVAILABLE, service.getSeat("A-1", null).state); // Comprueba que la silla vuelve a estar disponible.
+        assertEquals(90, service.getEventInfo(null).availableSeats); // Comprueba que el aforo refleje la liberación.
+    } // Finaliza el caso de propiedad de bloqueo.
+
+    @Test // Verifica que un bloqueo vencido deje de impedir nuevas reservas.
+    public void expiredLockBecomesAvailableAgain() throws Exception { // Permite comprobar el resultado de las operaciones RPC.
+        service.close(); // Detiene el planificador del servicio con el plazo normal.
+        service = new BookingServiceImpl(1); // Usa un plazo reducido para evitar esperar 90 segundos en la prueba.
+        service.lockSeat("A-1", "owner", null); // Retiene la silla durante el plazo corto.
+
+        long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(4); // Limita la espera para que un fallo no bloquee la suite.
+        while (service.getSeat("A-1", null).state == SeatState.LOCKED && System.nanoTime() < deadline) { // Espera hasta que la expiración sea visible.
+            Thread.sleep(50); // Deja tiempo al reloj y al planificador de expiraciones.
+        } // Finaliza la espera acotada.
+
+        assertEquals(SeatState.AVAILABLE, service.getSeat("A-1", null).state); // Comprueba que la retención vencida se libere.
+        assertThrows(BookingException.class, () -> service.confirmBooking(new String[]{"A-1"}, "owner", "Ana Pérez", "ana@example.com", null)); // Rechaza comprar con el bloqueo ya vencido.
+        service.lockSeat("A-1", "next-owner", null); // Comprueba que otro cliente pueda adquirir la silla vencida.
+        assertEquals("next-owner", service.getSeat("A-1", null).lockedByClientId); // Comprueba que el nuevo propietario figure en el inventario.
+    } // Finaliza el caso de expiración.
+
+    @Test // Verifica que una compra con una silla inválida no confirme parcialmente las demás.
+    public void invalidMultiSeatBookingDoesNotPartiallyBookSeats() throws Exception { // Permite comprobar excepciones del servicio.
+        service.lockSeat("A-1", "buyer", null); // Retiene una silla para la compra que se intentará.
+        service.lockSeat("A-2", "other", null); // Retiene otra silla para impedir que el comprador la incluya.
+        String[] requestedSeats = {"A-1", "A-2"}; // Combina una silla propia y otra de un cliente diferente.
+
+        assertThrows(BookingException.class, () -> service.confirmBooking(requestedSeats, "buyer", "Ana Pérez", "ana@example.com", null)); // Rechaza la compra completa ante una silla ajena.
+        assertEquals(SeatState.LOCKED, service.getSeat("A-1", null).state); // Comprueba que la silla válida no se haya vendido parcialmente.
+        assertEquals("buyer", service.getSeat("A-1", null).lockedByClientId); // Comprueba que la retención original sigue perteneciendo al comprador.
+        assertEquals(SeatState.LOCKED, service.getSeat("A-2", null).state); // Comprueba que la silla ajena conserva su bloqueo.
+        assertEquals(0, service.getMyBookings("buyer", null).length); // Comprueba que un fallo no genere un comprobante parcial.
+    } // Finaliza el caso de atomicidad.
+
+    @Test // Verifica que reiniciar el inventario elimine ventas, bloqueos e historial.
+    public void resetRestoresAllSeatsAndClearsBookingHistory() throws Exception { // Permite preparar y confirmar una compra antes de reiniciar.
+        service.lockSeat("A-1", "buyer", null); // Retiene una silla para completar una compra válida.
+        service.confirmBooking(new String[]{"A-1"}, "buyer", "Ana Pérez", "ana@example.com", null); // Genera una reserva que debe eliminar el reinicio.
+        service.lockSeat("B-1", "another-buyer", null); // Añade otro bloqueo para verificar que también se limpie.
+
+        service.resetSeats(null); // Ejecuta el reinicio remoto del inventario de laboratorio.
+
+        assertEquals(90, service.getEventInfo(null).availableSeats); // Comprueba que las 90 sillas vuelvan a estar disponibles.
+        assertEquals(0, service.getEventInfo(null).bookedSeats); // Comprueba que no queden ventas confirmadas.
+        assertEquals(SeatState.AVAILABLE, service.getSeat("B-1", null).state); // Comprueba que el bloqueo restante también se borre.
+        assertEquals(0, service.getMyBookings("buyer", null).length); // Comprueba que el historial del comprador quede vacío.
+    } // Finaliza el caso de reinicio.
 } // Finaliza la clase de pruebas.

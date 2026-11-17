@@ -1,11 +1,11 @@
-plugins {
-    id 'application'
-}
+plugins { // Declara los complementos que necesita el módulo cliente.
+    id 'application' // Añade las tareas para ejecutar el cliente de consola.
+} // Finaliza los complementos del cliente.
 
-dependencies {
-    implementation project(':common')
-}
+dependencies { // Declara el contrato compartido que usa la consola.
+    implementation project(':common') // Incluye los stubs Slice compilados por common.
+} // Finaliza las dependencias del cliente.
 
-application {
-    mainClass = 'co.icesi.booking.client.BookingClientApp'
-}
+application { // Configura el punto de entrada de la aplicación nativa.
+    mainClass = 'co.icesi.booking.client.BookingClientApp' // Ejecuta el menú y las pruebas TCP.
+} // Finaliza la configuración ejecutable del cliente.

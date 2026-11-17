@@ -1,17 +1,17 @@
-plugins {
-    id 'application'
-}
+plugins { // Declara los complementos que necesita el servidor.
+    id 'application' // Añade tareas ejecutables para el proceso servidor.
+} // Finaliza los complementos del servidor.
 
-dependencies {
-    implementation project(':common')
-}
+dependencies { // Declara el contrato RPC compartido que implementa el servidor.
+    implementation project(':common') // Incluye clases Java generadas desde Slice.
+} // Finaliza las dependencias del servidor.
 
-application {
-    mainClass = 'co.icesi.booking.server.BookingServerApp'
-}
+application { // Configura el punto de entrada del servidor.
+    mainClass = 'co.icesi.booking.server.BookingServerApp' // Ejecuta el adaptador TCP/WebSocket de Ice.
+} // Finaliza la configuración ejecutable del servidor.
 
-task runServer(type: JavaExec) {
-    mainClass = 'co.icesi.booking.server.BookingServerApp'
-    classpath = sourceSets.main.runtimeClasspath
-    standardInput = System.in
-}
+task runServer(type: JavaExec) { // Crea la tarea local que arranca el servicio RPC.
+    mainClass = 'co.icesi.booking.server.BookingServerApp' // Selecciona el punto de entrada del servidor.
+    classpath = sourceSets.main.runtimeClasspath // Incluye clases compiladas y dependencias de ejecución.
+    standardInput = System.in // Permite que la tarea use la entrada de la terminal.
+} // Finaliza la tarea de ejecución del servidor.
