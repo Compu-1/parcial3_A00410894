@@ -108,15 +108,15 @@ public class BookingClientApp { // Implementa el menú interactivo y las pruebas
 
     private static void printMenu() { // Presenta las operaciones disponibles para el usuario.
         System.out.println("\n--------------------------------------------------------------------------"); // Delimita visualmente el menú.
-        System.out.println("1. Ver información del evento y aforo"); // Ofrece la consulta de datos del evento.
-        System.out.println("2. Consultar mapa de sillas"); // Ofrece la consulta del inventario.
-        System.out.println("3. Bloquear silla (lockSeat)"); // Ofrece una retención temporal.
-        System.out.println("4. Confirmar compra de sillas bloqueadas (confirmBooking)"); // Ofrece convertir bloqueos propios en venta.
-        System.out.println("5. Liberar silla bloqueada (releaseSeat)"); // Ofrece devolver voluntariamente una silla.
-        System.out.println("6. Ver mis sillas bloqueadas y reservas confirmadas"); // Ofrece consultas asociadas al cliente.
-        System.out.println("7. VALIDAR EXCLUSIÓN MUTUA DEL INVENTARIO"); // Nombra la prueba que verifica un solo ganador por asiento.
-        System.out.println("8. Reiniciar catálogo de sillas (resetSeats)"); // Ofrece reiniciar los datos del laboratorio.
-        System.out.println("0. Salir"); // Ofrece terminar la sesión del cliente.
+        System.out.println("1. Consultar información del evento y estado del aforo"); // Ofrece la consulta de datos generales del evento.
+        System.out.println("2. Ver mapa y disponibilidad de las sillas"); // Ofrece la consulta visual del inventario.
+        System.out.println("3. Reservar temporalmente una silla"); // Ofrece retener una silla durante el plazo permitido.
+        System.out.println("4. Confirmar la compra de mis sillas reservadas"); // Ofrece convertir bloqueos propios en una compra.
+        System.out.println("5. Liberar una silla reservada"); // Ofrece devolver una silla antes de que venza el bloqueo.
+        System.out.println("6. Consultar mis bloqueos y compras confirmadas"); // Ofrece las consultas asociadas a esta sesión.
+        System.out.println("7. Probar concurrencia sobre una misma silla"); // Describe la prueba que verifica la exclusión mutua.
+        System.out.println("8. Reiniciar inventario y borrar las reservas de prueba"); // Advierte que se eliminan bloqueos y compras.
+        System.out.println("0. Salir del cliente"); // Ofrece terminar la sesión del cliente.
         System.out.println("--------------------------------------------------------------------------"); // Cierra visualmente el menú.
     } // Finaliza la presentación del menú.
 

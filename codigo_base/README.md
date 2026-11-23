@@ -1,3 +1,4 @@
+
 # Backend ZeroC Ice
 
 Este módulo contiene el contrato Slice compartido, el servidor Java 17 y el cliente de consola. La guía completa de ejecución está en [`../README.md`](../README.md).
