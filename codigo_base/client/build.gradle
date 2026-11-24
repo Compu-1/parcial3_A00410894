@@ -1,3 +1,4 @@
+// La carpeta client configura el cliente Java de consola usado para operar y probar el backend.
 plugins { // Declara los complementos que necesita el módulo cliente.
     id 'application' // Añade las tareas para ejecutar el cliente de consola.
 } // Finaliza los complementos del cliente.

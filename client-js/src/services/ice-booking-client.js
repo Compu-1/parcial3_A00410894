@@ -1,3 +1,4 @@
+// La carpeta services encapsula la comunicacion RPC del navegador con ZeroC Ice.
 const Ice = window.Ice; // Obtiene el runtime browser oficial cargado antes del bundle.
 const BookingApp = window.BookingApp; // Obtiene los proxies generados desde el contrato Slice compartido.
 

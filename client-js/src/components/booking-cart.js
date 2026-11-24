@@ -1,3 +1,4 @@
+// La carpeta components contiene piezas visuales; este archivo presenta el carrito temporal.
 import { iceLongToNumber } from "../utils/ice-number.js"; // Convierte los campos long de Ice antes de calcular tiempos.
 
 export class BookingCart { // Renderiza los bloqueos propios y su cuenta regresiva.

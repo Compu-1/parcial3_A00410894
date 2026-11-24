@@ -1,3 +1,4 @@
+// La carpeta components contiene piezas visuales; este archivo muestra las compras confirmadas.
 import { iceLongToNumber } from "../utils/ice-number.js"; // Convierte la marca de tiempo Slice antes de presentarla como fecha.
 
 export class BookingHistory { // Presenta comprobantes confirmados para la sesión actual.

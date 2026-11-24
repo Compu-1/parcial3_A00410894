@@ -1,3 +1,4 @@
+// La carpeta client-js contiene la aplicacion web y su configuracion de empaquetado.
 const path = require("path"); // Resuelve rutas de forma independiente del sistema operativo.
 const CopyWebpackPlugin = require("copy-webpack-plugin"); // Copia el runtime browser de Ice y los stubs Slice.
 const HtmlWebpackPlugin = require("html-webpack-plugin"); // Genera el HTML con el bundle inyectado.

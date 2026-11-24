@@ -1,3 +1,4 @@
+// La carpeta scripts contiene automatizaciones usadas para generar codigo antes del build.
 const path = require("path"); // Resuelve el contrato Slice desde la raíz de este proyecto web.
 const fs = require("fs"); // Permite crear el directorio requerido por el compilador.
 const sliceCompiler = require("slice2js"); // Accede al compilador oficial distribuido con el paquete npm.

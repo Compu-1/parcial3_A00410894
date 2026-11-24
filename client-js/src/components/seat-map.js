@@ -1,3 +1,4 @@
+// La carpeta components contiene piezas visuales; este archivo dibuja el mapa interactivo de sillas.
 export class SeatMap { // Presenta el inventario como filas de botones accesibles.
     constructor(root, filter, onSelect, seatStates, seatZones) { // Recibe nodos y enums generados desde Slice.
         this.root = root; // Conserva el contenedor de filas del plano.

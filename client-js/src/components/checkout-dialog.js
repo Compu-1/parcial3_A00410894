@@ -1,3 +1,4 @@
+// La carpeta components contiene piezas visuales; este archivo gestiona el formulario de compra.
 export class CheckoutDialog { // Gestiona el formulario modal de confirmación de compra.
     constructor(dialog, onSubmit) { // Recibe el diálogo y la operación RPC que lo confirma.
         this.dialog = dialog; // Conserva el diálogo nativo y accesible.

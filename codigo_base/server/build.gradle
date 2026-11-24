@@ -1,3 +1,4 @@
+// La carpeta server configura el servicio Java que implementa las operaciones RPC.
 plugins { // Declara los complementos que necesita el servidor.
     id 'application' // Añade tareas ejecutables para el proceso servidor.
 } // Finaliza los complementos del servidor.

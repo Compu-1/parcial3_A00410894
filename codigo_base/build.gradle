@@ -1,3 +1,4 @@
+// La carpeta codigo_base agrupa el build Gradle y las reglas compartidas por sus modulos.
 plugins { // Declara complementos disponibles para los subproyectos.
     id 'com.zeroc.gradle.ice-builder.slice' version '1.5.0' apply false // Permite compilar contratos Slice desde el módulo common.
 } // Finaliza la declaración raíz de complementos.

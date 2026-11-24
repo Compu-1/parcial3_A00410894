@@ -1,2 +1,3 @@
+// La carpeta codigo_base contiene los modulos Gradle del servicio distribuido.
 rootProject.name = 'seat-booking-ice' // Asigna el nombre que identifica el build de Gradle.
 include 'common', 'server', 'client' // Registra los módulos del contrato, servidor y cliente Java.

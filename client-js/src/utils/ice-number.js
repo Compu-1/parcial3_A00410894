@@ -1,3 +1,4 @@
+// La carpeta utils contiene conversiones reutilizables para manejar respuestas de Ice.
 export function iceLongToNumber(value) { // Converts Slice 64-bit values to JavaScript numbers used by dates and timers.
     if (typeof value === "number") return value; // Preserves numeric values when a mapping already made the conversion.
     if (value && typeof value.toNumber === "function") return value.toNumber(); // Uses the supported Ice.Long conversion method.

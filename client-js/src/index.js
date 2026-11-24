@@ -1,3 +1,4 @@
+// La carpeta src contiene el punto de entrada que inicializa y monta la SPA.
 import "./styles.css"; // Carga los estilos junto al bundle de JavaScript.
 import { mountBookingApp } from "./app.js"; // Importa el punto de entrada de la aplicación.
 

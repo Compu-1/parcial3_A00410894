@@ -1,3 +1,4 @@
+// La carpeta slice define el contrato RPC compartido que Ice genera para cada lenguaje.
 module BookingApp { // Agrupa los tipos de datos y el servicio remoto de reservas.
 
     enum SeatZone { // Enumera las ubicaciones disponibles en el auditorio.

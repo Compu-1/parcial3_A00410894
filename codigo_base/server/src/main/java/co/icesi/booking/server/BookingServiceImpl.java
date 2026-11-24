@@ -1,3 +1,4 @@
+// La carpeta server/src/main contiene la logica de inventario, bloqueos y confirmacion de compras.
 package co.icesi.booking.server; // Ubica la implementación del contrato Slice en el módulo del servidor.
 
 import java.util.ArrayList; // Crea resultados ordenados y colecciones de compra.

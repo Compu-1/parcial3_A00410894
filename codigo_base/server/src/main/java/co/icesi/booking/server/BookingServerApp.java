@@ -1,3 +1,4 @@
+// La carpeta server/src/main contiene el punto de entrada del backend y su configuracion de red.
 package co.icesi.booking.server; // Ubica el punto de entrada en el paquete del servidor.
 
 import com.zeroc.Ice.Communicator; // Administra el ciclo de vida del runtime Ice.

@@ -1,3 +1,4 @@
+// La carpeta common configura el contrato y las clases compartidas por servidor y clientes.
 plugins { // Declara compilación de biblioteca y generación de código Slice.
     id 'java-library' // Publica las clases comunes para server y client.
     id 'com.zeroc.gradle.ice-builder.slice' // Genera clases Java a partir del contrato Slice.

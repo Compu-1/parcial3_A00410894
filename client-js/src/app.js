@@ -1,3 +1,4 @@
+// La carpeta src contiene la interfaz web y coordina sus datos y componentes.
 import { BookingCart } from "./components/booking-cart.js"; // Presenta bloqueos, importes y temporizadores.
 import { BookingHistory } from "./components/booking-history.js"; // Presenta compras confirmadas del cliente.
 import { CheckoutDialog } from "./components/checkout-dialog.js"; // Solicita y valida datos de compra.

@@ -1,3 +1,4 @@
+// La carpeta server/src/test contiene pruebas automatizadas de concurrencia e integridad del servicio.
 package co.icesi.booking.server; // Sitúa las pruebas junto al paquete del servicio probado.
 
 import BookingApp.BookingException; // Permite verificar errores del contrato RPC de reservas.

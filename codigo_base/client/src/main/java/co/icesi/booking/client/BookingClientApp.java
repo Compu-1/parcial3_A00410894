@@ -1,3 +1,4 @@
+// La carpeta client/src contiene el cliente Java de consola y sus pruebas manuales de RPC.
 package co.icesi.booking.client; // Ubica las herramientas de prueba del cliente en su paquete.
 
 import BookingApp.*; // Importa los stubs Slice y tipos del servicio de reservas.
